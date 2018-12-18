@@ -1,0 +1,14 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+inspec.lock
+results/
+pkg/
+.env
+.rspec_status
+coverage
