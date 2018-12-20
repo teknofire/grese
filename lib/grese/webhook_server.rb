@@ -77,7 +77,7 @@ module Grese
     end
 
     def update_zendesk(id, filename, results)
-      return if results[:status] == 1
+      return if results[:status] != 0
 
       response = zendesk_comment_text(filename, results[:results].chomp)
 

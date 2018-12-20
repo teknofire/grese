@@ -9,6 +9,11 @@ RSpec.describe Grese::WebhookServer do
     expect(server.debug?).to be true
   end
 
+  it 'debug should default to false' do
+    server = Grese::WebhookServer.new(url: 'https://sandbox.zendesk.com')
+    expect(server.debug?).to be false
+  end
+
   it 'should validate chef zendesk url' do
     result = server.valid_zendesk_request('https://getchef.zendesk.com')
     expect(result).to be true
@@ -59,5 +64,45 @@ RSpec.describe Grese::WebhookServer do
       error: '',
       status: 0
     )
+  end
+
+  it 'should give a message about no issues' do
+    expect(server.zendesk_comment_text('foo.tar.gz', '')).to match(
+      /No issues were found in the gather-log bundle/
+    )
+  end
+
+  it 'should show the checklog output' do
+    expect(server.zendesk_comment_text('foo.tar.gz', 'Bag box suddenly here now gone')).to match(
+      /Bag box suddenly here now gone/
+    )
+  end
+
+  it 'should call out to mixlib shellout!' do
+    dbl = double('cmd')
+    allow(Mixlib::ShellOut).to receive(:new).with('test', {}) { dbl }
+    allow(dbl).to receive(:run_command)
+    allow(dbl).to receive(:error!)
+
+    expect(server.shellout('test')).to eq dbl
+  end
+
+  it 'should return nil if the status is not 0' do
+    expect(server.update_zendesk(123, 'test.tar.gz', status: 1)).to be nil
+  end
+
+  it 'should generate a zendesk comment' do
+    expect(server).to receive(:zendesk_comment_text).with('test.tar.gz', 'Wahoo') { 'Report output' }
+    expect(ZendeskAPI::Ticket).to_not receive(:update!)
+
+    server.update_zendesk('123', 'test.tar.gz', results: 'Wahoo', status: 0)
+  end
+
+  it 'should attempt to update the zendesk ticket' do
+    server = Grese::WebhookServer.new(url: 'https://sandbox.zendesk.com')
+    expect(server).to receive(:zendesk_comment_text).with('test.tar.gz', 'Wahoo') { 'Report output' }
+    expect(ZendeskAPI::Ticket).to receive(:update!).with(server.zdclient, id: '123', comment: { value: 'Report output', public: false })
+
+    server.update_zendesk('123', 'test.tar.gz', results: 'Wahoo', status: 0)
   end
 end
