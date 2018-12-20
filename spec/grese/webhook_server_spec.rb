@@ -43,4 +43,21 @@ RSpec.describe Grese::WebhookServer do
     result = server.check_logs('https://getchef.zendesk.com?name=foo.txt')
     expect(result[:error]).to eq 'Invalid gather-log bundle'
   end
+
+  it 'should execute check_logs' do
+    cmd = [
+      'check_logs', '-m', '--remote',
+      'https://getchef.zendesk.com?name=foo.tar.gz'
+    ]
+
+    expect(server).to receive(:shellout).with(cmd) {
+      double('shellout', stdout: 'Wahoo', stderr: '', exitstatus: 0)
+    }
+
+    expect(server.check_logs('https://getchef.zendesk.com?name=foo.tar.gz')).to eq(
+      results: 'Wahoo',
+      error: '',
+      status: 0
+    )
+  end
 end
