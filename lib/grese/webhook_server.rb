@@ -1,7 +1,6 @@
 require 'mixlib/shellout'
 require 'string/utf8'
 require 'zendesk_api'
-require 'paint'
 require 'cgi'
 
 module Grese
@@ -12,7 +11,7 @@ module Grese
       @debug = debug
       @zdconfig = config
       zdclient
-      puts 'Debug enabled' if @debug
+      # puts 'Debug enabled' if @debug
     end
 
     def debug?
@@ -20,7 +19,7 @@ module Grese
     end
 
     def zdclient
-      puts 'Initializing Zendesk Client'
+      # puts 'Initializing Zendesk Client'
       logger = Logger.new(STDOUT)
       logger.level = Logger::ERROR
 
@@ -43,7 +42,7 @@ module Grese
       params = CGI.parse(uri.query)
       extension = params['name'].first.split('.').last
 
-      invalid_extensions = %w[log png jpg]
+      invalid_extensions = %w[log png jpg txt]
       !invalid_extensions.include?(extension)
     end
 
@@ -59,7 +58,7 @@ module Grese
         return { error: 'Invalid gather-log bundle', status: 1 }
       end
 
-      cmd = ['check_logs', '--remote', remote_url]
+      cmd = ['check_logs', '-m', '--remote', remote_url]
 
       puts "[EXECUTING] #{cmd.join(' ')}"
       checklog = shellout(cmd)
@@ -77,12 +76,8 @@ module Grese
       shell
     end
 
-    def invalid_request
-      status 400
-    end
-
     def update_zendesk(id, filename, results)
-      return if results[:status] == 1
+      return if results[:status] != 0
 
       response = zendesk_comment_text(filename, results[:results].chomp)
 
@@ -101,7 +96,7 @@ module Grese
         Inspec gather-log results for: #{filename}
 
         ```
-        #{Paint.unpaint(output).utf8!}
+        #{output.utf8!}
         ```
       EOC
     end

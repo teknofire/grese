@@ -21,6 +21,10 @@ def authenticate!(token)
   end
 end
 
+def invalid_request
+  status 400
+end
+
 before '/zendesk/:token' do
   authenticate!(params['token'])
 end
@@ -34,7 +38,7 @@ post '/:token' do
     server.check_logs(remote_url).to_json
   else
     # Invalid request no remote_url param
-    status 400
+    invalid_request
   end
 end
 
@@ -54,7 +58,7 @@ get '/zendesk/:token' do
     end
   else
     # Invalid request no info param
-    status 400
+    invalid_request
   end
 end
 
