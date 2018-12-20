@@ -3,8 +3,9 @@ pkg_origin=will
 pkg_maintainer="Will Fisher <will@chef.io>"
 pkg_license=('Apache-2.0')
 pkg_deps=(
+  core/bash
   core/ruby
-  will/gatherlogs/1.0.0/20181218021959
+  will/gatherlogs
 )
 
 pkg_build_deps=(
