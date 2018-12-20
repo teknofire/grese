@@ -42,7 +42,7 @@ module Grese
       params = CGI.parse(uri.query)
       extension = params['name'].first.split('.').last
 
-      invalid_extensions = %w[log png jpg]
+      invalid_extensions = %w[log png jpg txt]
       !invalid_extensions.include?(extension)
     end
 

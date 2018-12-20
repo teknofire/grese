@@ -24,6 +24,16 @@ RSpec.describe Grese::WebhookServer do
     expect(result[:error]).to eq 'Invalid URL'
   end
 
+  it 'should validate gatherlog bundle' do
+    result = server.valid_gatherlog_bundle('https://getchef.zendesk.com?name=foo.tar.gz')
+    expect(result).to be true
+  end
+
+  it 'should validate as a gatherlog bundle' do
+    result = server.valid_gatherlog_bundle('https://getchef.zendesk.com?name=foo.txt')
+    expect(result).to_not be true
+  end
+
   it 'should return an error for invalid url' do
     result = server.check_logs('https://google.com')
     expect(result[:error]).to eq 'Invalid URL'
