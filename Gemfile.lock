@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    grese (0.1.1)
+    grese (0.2.0)
       mixlib-shellout (~> 2.4)
       puma
       sinatra (~> 2.0)
