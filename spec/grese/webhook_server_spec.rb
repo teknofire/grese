@@ -38,4 +38,9 @@ RSpec.describe Grese::WebhookServer do
     result = server.check_logs('https://google.com')
     expect(result[:error]).to eq 'Invalid URL'
   end
+
+  it 'should return an error for invalid gather-log bundle' do
+    result = server.check_logs('https://getchef.zendesk.com?name=foo.txt')
+    expect(result[:error]).to eq 'Invalid gather-log bundle'
+  end
 end
