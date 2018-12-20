@@ -1,7 +1,6 @@
 require 'mixlib/shellout'
 require 'string/utf8'
 require 'zendesk_api'
-require 'paint'
 require 'cgi'
 
 module Grese
@@ -12,7 +11,7 @@ module Grese
       @debug = debug
       @zdconfig = config
       zdclient
-      puts 'Debug enabled' if @debug
+      # puts 'Debug enabled' if @debug
     end
 
     def debug?
@@ -20,7 +19,7 @@ module Grese
     end
 
     def zdclient
-      puts 'Initializing Zendesk Client'
+      # puts 'Initializing Zendesk Client'
       logger = Logger.new(STDOUT)
       logger.level = Logger::ERROR
 
@@ -59,7 +58,7 @@ module Grese
         return { error: 'Invalid gather-log bundle', status: 1 }
       end
 
-      cmd = ['check_logs', '--remote', remote_url]
+      cmd = ['check_logs', '-m', '--remote', remote_url]
 
       puts "[EXECUTING] #{cmd.join(' ')}"
       checklog = shellout(cmd)
@@ -75,10 +74,6 @@ module Grese
       shell = Mixlib::ShellOut.new(cmd, options)
       shell.run_command
       shell
-    end
-
-    def invalid_request
-      status 400
     end
 
     def update_zendesk(id, filename, results)
@@ -101,7 +96,7 @@ module Grese
         Inspec gather-log results for: #{filename}
 
         ```
-        #{Paint.unpaint(output).utf8!}
+        #{output.utf8!}
         ```
       EOC
     end
