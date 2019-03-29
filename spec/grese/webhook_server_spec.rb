@@ -51,7 +51,7 @@ RSpec.describe Grese::WebhookServer do
 
   it 'should execute check_logs' do
     cmd = [
-      'check_logs', '-m', '--remote',
+      'gatherlogs_report', '-m', '--remote',
       'https://getchef.zendesk.com?name=foo.tar.gz'
     ]
 
